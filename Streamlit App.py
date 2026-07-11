@@ -4,6 +4,7 @@ import os
 #from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 import requests
+import pandas as pd
 
 # Write directly to the app
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
@@ -19,8 +20,10 @@ st.write('Name on your Smoothie will be: ', name_on_order)
 cnx = st.connection('snowflake')
 session = cnx.session()
 
-df_fruits = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'))
-#st.dataframe(data=df_fruits)
+df_fruits = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
+pd_df = df_fruits.to_pandas()
+st.dataframe(data=pd_df)
+
 ingredients = st.multiselect(
                 'Choose up to 5 ingredients?',
                 df_fruits,
